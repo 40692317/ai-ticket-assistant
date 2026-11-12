@@ -1,2 +1,4 @@
-# ai-ticket-assistant
-AI-powered support ticket assistant built with Python and Streamlit Public selected
+&#x20;  !\[Ticket analysis](Screenshot1.png)
+
+&#x20;  !\[Suggested reply and ticket history](Screenshot2.png)
+
