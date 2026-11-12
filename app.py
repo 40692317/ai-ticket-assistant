@@ -1,5 +1,9 @@
+import pandas as pd
 import streamlit as st
 from triage import triage_ticket
+from database import init_db, save_ticket, get_all_tickets
+
+init_db()
 
 st.title("AI Support Ticket Assistant")
 st.write("Paste a support ticket and the AI will sort it by category and priority.")
@@ -21,7 +25,20 @@ if st.button("Analyse ticket"):
                 st.error("Couldn't get an answer from the AI right now. Please try again.")
                 st.stop()
 
+        save_ticket(ticket, result)
+
         col1, col2 = st.columns(2)
         col1.metric("Category", result["category"])
         col2.metric("Priority", result["priority"])
         st.write("**Summary:**", result["summary"])
+        st.success("Ticket saved.")
+
+st.divider()
+st.subheader("All tickets")
+
+rows = get_all_tickets()
+if rows:
+    df = pd.DataFrame(rows, columns=["Time", "Category", "Priority", "Summary"])
+    st.dataframe(df, hide_index=True)
+else:
+    st.info("No tickets yet. Analyse one above to get started.")

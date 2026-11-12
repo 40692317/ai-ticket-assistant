@@ -207,6 +207,7 @@ tempCodeRunnerFile.py
 
 # Ruff stuff:
 .ruff_cache/
+tickets.db
 
 # PyPI configuration file
 .pypirc
