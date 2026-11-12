@@ -18,7 +18,8 @@ def init_db():
                 ticket_text TEXT,
                 category TEXT,
                 priority TEXT,
-                summary TEXT
+                summary TEXT,
+                reply TEXT
             )
             """
         )
@@ -27,14 +28,15 @@ def init_db():
 def save_ticket(ticket_text, result):
     with get_connection() as conn:
         conn.execute(
-            "INSERT INTO tickets (created_at, ticket_text, category, priority, summary) "
-            "VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO tickets (created_at, ticket_text, category, priority, summary, reply) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
             (
                 datetime.now().strftime("%Y-%m-%d %H:%M"),
                 ticket_text,
                 result["category"],
                 result["priority"],
                 result["summary"],
+                result["reply"],
             ),
         )
 

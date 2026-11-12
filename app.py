@@ -6,7 +6,7 @@ from database import init_db, save_ticket, get_all_tickets
 init_db()
 
 st.title("AI Support Ticket Assistant")
-st.write("Paste a support ticket and the AI will sort it by category and priority.")
+st.write("Paste a support ticket and the AI will sort it and draft a reply.")
 
 ticket = st.text_area(
     "Support ticket",
@@ -31,6 +31,9 @@ if st.button("Analyse ticket"):
         col1.metric("Category", result["category"])
         col2.metric("Priority", result["priority"])
         st.write("**Summary:**", result["summary"])
+
+        st.subheader("Suggested reply")
+        st.info(result["reply"])
         st.success("Ticket saved.")
 
 st.divider()
