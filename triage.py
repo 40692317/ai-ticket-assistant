@@ -13,7 +13,10 @@ Reply with ONLY a JSON object, no other text, in exactly this format:
 {"category": "...", "priority": "...", "summary": "...", "reply": "..."}
 
 category must be one of: Network, Hardware, Software, Account, Other
-priority must be one of: Low, Medium, High
+   priority must be one of: Low, Medium, High, using these rules:
+   - High: many people are affected, there is a security risk, or there is an urgent deadline today.
+   - Medium: one person cannot work properly, with no urgent deadline.
+   - Low: a minor issue, a question, or a request for something new.
 summary must be one short sentence.
 reply must be a short, friendly message (2 to 4 sentences) to the person who
 raised the ticket. Acknowledge the problem and suggest a sensible first step.
@@ -46,7 +49,10 @@ def triage_ticket(ticket_text):
         max_tokens=600,
         messages=[{"role": "user", "content": PROMPT + ticket_text}],
     )
-    return parse_response(response.content[0].text)
+    raw_text = "".join(
+        block.text for block in response.content if block.type == "text"
+    )
+    return parse_response(raw_text)
 
 
 if __name__ == "__main__":
