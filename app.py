@@ -1,7 +1,9 @@
+from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 from triage import triage_ticket
-from database import init_db, save_ticket, get_all_tickets
+from database import init_db, save_ticket
 
 MAX_TICKETS_PER_SESSION = 5
 
@@ -9,6 +11,8 @@ init_db()
 
 if "tickets_used" not in st.session_state:
     st.session_state.tickets_used = 0
+if "my_tickets" not in st.session_state:
+    st.session_state.my_tickets = []
 
 st.title("AI Support Ticket Assistant")
 st.write("Paste a support ticket and the AI will sort it and draft a reply.")
@@ -36,6 +40,12 @@ if st.button("Analyse ticket"):
 
         st.session_state.tickets_used += 1
         save_ticket(ticket, result)
+        st.session_state.my_tickets.insert(0, (
+            datetime.now().strftime("%Y-%m-%d %H:%M"),
+            result["category"],
+            result["priority"],
+            result["summary"],
+        ))
 
         col1, col2 = st.columns(2)
         col1.metric("Category", result["category"])
@@ -50,11 +60,14 @@ left = MAX_TICKETS_PER_SESSION - st.session_state.tickets_used
 st.caption(f"Demo limit: {left} of {MAX_TICKETS_PER_SESSION} tickets left this session.")
 
 st.divider()
-st.subheader("All tickets")
+st.subheader("Your tickets this session")
+st.caption("Only you can see these. Other visitors see only their own.")
 
-rows = get_all_tickets()
-if rows:
-    df = pd.DataFrame(rows, columns=["Time", "Category", "Priority", "Summary"])
+if st.session_state.my_tickets:
+    df = pd.DataFrame(
+        st.session_state.my_tickets,
+        columns=["Time", "Category", "Priority", "Summary"],
+    )
     st.dataframe(df, hide_index=True)
 else:
     st.info("No tickets yet. Analyse one above to get started.")
